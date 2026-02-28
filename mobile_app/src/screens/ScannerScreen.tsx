@@ -4,10 +4,8 @@ import Scanner from '../components/Scanner';
 import { COLORS } from '../constants/theme';
 
 const ScannerScreen = ({ navigation }: any) => {
-    const handleObjectDetected = (object: string) => {
-        // In a real app, this would trigger detection logic
-        // For now, we'll navigate to suggestions with some mock data
-        navigation.navigate('Suggestions', { detected: [object] });
+    const handleObjectDetected = (suggestions: string) => {
+        navigation.navigate('Suggestions', { suggestions });
     };
 
     return (

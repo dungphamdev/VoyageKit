@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants/theme';
-import { Scan, X, Zap, RotateCw } from 'lucide-react-native';
+import { Scan, X, Zap, RotateCw, Camera } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
-const Scanner = ({ onObjectDetected }: { onObjectDetected: (object: string) => void }) => {
+const Scanner = ({ onObjectDetected }: { onObjectDetected: (suggestions: string) => void }) => {
     const [permission, requestPermission] = useCameraPermissions();
     const [facing, setFacing] = useState<'back' | 'front'>('back');
     const [flash, setFlash] = useState(false);
+    const cameraRef = useRef<CameraView>(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     if (!permission) {
         return <View />;
@@ -30,9 +32,52 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (object: string) => v
         setFacing((current) => (current === 'back' ? 'front' : 'back'));
     }
 
+    async function takePicture() {
+        if (!cameraRef.current || isAnalyzing) return;
+        setIsAnalyzing(true);
+        try {
+            const photo = await cameraRef.current.takePictureAsync({ base64: true, quality: 0.5 });
+            if (!photo) return;
+
+            const formData = new FormData();
+            formData.append('image', {
+                uri: photo.uri,
+                name: 'photo.jpg',
+                type: 'image/jpeg',
+            } as any);
+
+            // Using EXPO_PUBLIC_API_URL or fallback to a placeholder local IP
+            const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.3:3000/api/analyze';
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to reach API");
+            }
+
+            const data = await response.json();
+            if (data.success) {
+                onObjectDetected(data.suggestions);
+            } else {
+                Alert.alert("Analysis Failed", data.error || "Unknown error parsing image.");
+            }
+        } catch (e: any) {
+            console.error("Error capturing/sending photo:", e);
+            Alert.alert("Network Error", "Could not reach the backend. Ensure it is running and the IP matches.");
+        } finally {
+            setIsAnalyzing(false);
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <CameraView style={StyleSheet.absoluteFillObject} facing={facing} flash={flash ? 'on' : 'off'} />
+            <CameraView ref={cameraRef} style={StyleSheet.absoluteFillObject} facing={facing} flash={flash ? 'on' : 'off'} />
 
             <View style={styles.overlay}>
                 {/* Header */}
@@ -61,14 +106,24 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (object: string) => v
 
                 {/* Footer */}
                 <View style={styles.footer}>
-                    <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
+                    <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing} disabled={isAnalyzing}>
                         <RotateCw color={COLORS.text} size={24} />
                     </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.captureButton} onPress={takePicture} disabled={isAnalyzing}>
+                        <View style={styles.captureButtonInner}>
+                            {isAnalyzing ? (
+                                <ActivityIndicator color={COLORS.primary} size="large" />
+                            ) : (
+                                <Camera color={COLORS.primary} size={32} />
+                            )}
+                        </View>
+                    </TouchableOpacity>
+
                     <View style={styles.statusBadge}>
                         <Scan color={COLORS.success} size={16} />
-                        <Text style={styles.statusText}>AI Active</Text>
+                        <Text style={styles.statusText}>AI Ready</Text>
                     </View>
-                    <View style={{ width: 24 }} />
                 </View>
             </View>
         </View>
@@ -178,6 +233,27 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: SPACING.xl,
+    },
+    captureButton: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'rgba(255,255,255,0.3)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    captureButtonInner: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: COLORS.surface,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     flipButton: {
         padding: SPACING.sm,
