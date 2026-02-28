@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants/theme';
@@ -8,7 +8,7 @@ const { width } = Dimensions.get('window');
 
 const Scanner = ({ onObjectDetected }: { onObjectDetected: (object: string) => void }) => {
     const [permission, requestPermission] = useCameraPermissions();
-    const [facing, setFacing] = useState<'back' | 'frontend'>('back');
+    const [facing, setFacing] = useState<'back' | 'front'>('back');
     const [flash, setFlash] = useState(false);
 
     if (!permission) {
@@ -27,7 +27,7 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (object: string) => v
     }
 
     function toggleCameraFacing() {
-        setFacing((current) => (current === 'back' ? 'frontend' : 'back'));
+        setFacing((current) => (current === 'back' ? 'front' : 'back'));
     }
 
     return (

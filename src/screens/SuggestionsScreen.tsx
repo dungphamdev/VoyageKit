@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants/theme';
-import { CheckCircle2, AlertCircle, ArrowLeft, RefreshCcw } from 'lucide-react-native';
+import { AlertCircle, ArrowLeft, RefreshCcw } from 'lucide-react-native';
 import { MOCK_CONTEXTS } from '../data/mockData';
 
 const SuggestionsScreen = ({ route, navigation }: any) => {
