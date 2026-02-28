@@ -1,6 +1,6 @@
-# Scan & Suggest - AI Mobile App
+# PackWise — AI Travel Prep Assistant
 
-A modern, cross-platform mobile application that uses AI to detect objects in real-time and suggest missing items that would complement the scene.
+A modern, cross-platform mobile application that uses AI to help you pack for travel. Scan your room or gear in real-time to detect objects and receive smart suggestions on what travel essentials you might be missing.
 
 ---
 
@@ -18,6 +18,7 @@ A modern, cross-platform mobile application that uses AI to detect objects in re
 - [Node.js](https://nodejs.org/) (v18+ recommended)
 - [Expo Go](https://expo.dev/expo-go) app on your physical device.
 - A [Google Gemini API Key](https://aistudio.google.com/app/apikey).
+- A [Supabase](https://app.supabase.com) account (free tier is sufficient).
 
 ---
 
@@ -37,6 +38,11 @@ A modern, cross-platform mobile application that uses AI to detect objects in re
    Create a `.env.local` file in the `backend/` directory:
    ```env
    GEMINI_API_KEY=your_gemini_api_key_here
+
+   # Supabase - see Database Setup section below
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
    ```
 
 4. **Run the development server**:
@@ -44,6 +50,37 @@ A modern, cross-platform mobile application that uses AI to detect objects in re
    npm run dev
    ```
    The backend will start at `http://localhost:3000`.
+
+---
+
+## 🗄️ Database Setup (Supabase)
+
+This project uses [Supabase](https://supabase.com) (free tier) as its database. Follow these steps to set it up:
+
+### 1. Create a Supabase Project
+- Go to [app.supabase.com](https://app.supabase.com) and create a new project.
+- Wait for the project to be provisioned (takes ~1 minute).
+
+### 2. Run the Schema
+- In your Supabase dashboard, go to **SQL Editor → New Query**.
+- Paste the entire contents of [`backend/supabase/schema.sql`](./backend/supabase/schema.sql) and click **Run**.
+- This creates the `scans` table, Row Level Security policies, and indexes.
+
+### 3. Get Your API Keys
+- Go to **Project Settings → API**.
+- Copy the following values into your `backend/.env.local`:
+
+| Key | Where to find it |
+|-----|-----------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `anon` / `public` key |
+| `SUPABASE_SERVICE_ROLE_KEY` | `service_role` key *(keep this secret!)* |
+
+> [!WARNING]
+> Never expose `SUPABASE_SERVICE_ROLE_KEY` on the client side. It is only used in server-side API routes.
+
+### 4. Restart the Backend
+After updating `.env.local`, restart the dev server (`npm run dev`). Each scan result will now automatically be saved to the `scans` table.
 
 ---
 
@@ -88,10 +125,11 @@ If the app cannot reach the backend:
 
 ---
 
-## ✨ Features (Planned)
+## ✨ Features
 
 - [x] Real-time camera integration.
-- [x] AI-powered object analysis via Gemini 1.5 Flash.
-- [ ] Context-aware missing item suggestions.
-- [ ] Premium, modern UI with smooth animations.
+- [x] AI-powered object analysis via Gemini Flash.
+- [x] Supabase database integration (scan history persistence).
+- [ ] User authentication.
+- [ ] View scan history in the app.
 - [ ] Offline support for basic detection.

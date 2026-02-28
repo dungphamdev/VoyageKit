@@ -1,12 +1,12 @@
 ---
-description: App rules and conventions for the antigravity React Native Expo SDK 54 app
+description: App rules and conventions for the PackWise (Travel Prep AI) React Native Expo SDK 54 app
 ---
 
 # Project Guidelines
 
 ## Overview
-This is a cross-platform mobile application built with React Native and Expo SDK 54.
-The core domain is scanning objects using device camera/AI and suggesting missing items contextually.
+This is a cross-platform mobile application built with React Native and Expo SDK 54, named **PackWise**.
+The core domain is helping users prepare for travel by scanning their gear/room using the camera/AI and suggesting missing travel essentials contextually (e.g., "You have a passport and suitcase, but you're missing a universal power adapter").
 
 ## Technical Stack
 - **Framework**: React Native with Expo (Managed Workflow, SDK 54)

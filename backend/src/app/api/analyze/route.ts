@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { supabaseAdmin } from "@/lib/supabase";
 
 
 export async function POST(req: NextRequest) {
@@ -12,11 +13,8 @@ export async function POST(req: NextRequest) {
         }
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        console.log("Gemini SDK initialized with API key (length):", apiKey.length);
 
         const modelName = "gemini-flash-latest";
-        console.log("Using model:", modelName);
-
         const model = genAI.getGenerativeModel({ model: modelName });
 
         const formData = await req.formData();
@@ -44,6 +42,20 @@ export async function POST(req: NextRequest) {
         const result = await model.generateContent([prompt, imagePart]);
         const responseText = result.response.text();
         console.log("Gemini AI analysis complete.");
+
+        // Save scan result to Supabase (non-blocking - won't fail the response if DB is unavailable)
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        if (supabaseUrl && supabaseUrl !== "your_supabase_url_here") {
+            const { error: dbError } = await supabaseAdmin
+                .from("scans")
+                .insert({ suggestions: responseText });
+
+            if (dbError) {
+                console.warn("Failed to save scan to database:", dbError.message);
+            } else {
+                console.log("Scan saved to database.");
+            }
+        }
 
         const response = NextResponse.json({ success: true, suggestions: responseText }, { status: 200 });
 
