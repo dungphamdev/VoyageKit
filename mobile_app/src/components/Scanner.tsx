@@ -58,7 +58,9 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (suggestions: string)
             });
 
             if (!response.ok) {
-                throw new Error("Failed to reach API");
+                const errorData = await response.json().catch(() => ({}));
+                console.error("Server responded with error:", response.status, errorData);
+                throw new Error(errorData.details || errorData.error || `Server error (${response.status})`);
             }
 
             const data = await response.json();
@@ -69,7 +71,7 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (suggestions: string)
             }
         } catch (e: any) {
             console.error("Error capturing/sending photo:", e);
-            Alert.alert("Network Error", "Could not reach the backend. Ensure it is running and the IP matches.");
+            Alert.alert("Analysis Error", e.message || "Could not reach the backend. Ensure it is running and the IP matches.");
         } finally {
             setIsAnalyzing(false);
         }
