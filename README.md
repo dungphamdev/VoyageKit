@@ -8,6 +8,7 @@ A modern, cross-platform mobile application that uses AI to help you pack for tr
 
 - `backend/`: Next.js API server using Google Gemini AI for image analysis.
 - `mobile_app/`: React Native (Expo) application with camera integration.
+- `DEVELOPER_GUIDE.md`: Advanced setup, AI integration (MCP), and database tips.
 
 ---
 
@@ -64,7 +65,7 @@ This project uses [Supabase](https://supabase.com) (free tier) as its database. 
 ### 2. Run the Schema
 - In your Supabase dashboard, go to **SQL Editor → New Query**.
 - Paste the entire contents of [`backend/supabase/schema.sql`](./backend/supabase/schema.sql) and click **Run**.
-- This creates the `scans` table, Row Level Security policies, and indexes.
+- This creates the `scans` table, `profiles` table, RLS policies, indexes, and an auto-create profile trigger.
 
 ### 3. Get Your API Keys
 - Go to **Project Settings → API**.
@@ -96,14 +97,16 @@ After updating `.env.local`, restart the dev server (`npm run dev`). Each scan r
    npm install
    ```
 
-3. **Configure Backend URL**:
-   To allow your physical device to talk to your local backend, you need to use your machine's local IP address.
-   
+3. **Configure Environment Variables**:
    Create a `.env` file in the `mobile_app/` directory:
    ```env
    EXPO_PUBLIC_API_URL=http://<YOUR_LOCAL_IP>:3000/api/analyze
+
+   # Supabase (same project as backend)
+   EXPO_PUBLIC_SUPABASE_URL=your_supabase_url_here
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
    ```
-   *(Tip: Find your IP using `ipconfig` on Windows or `ifconfig` on Mac/Linux)*.
+   *(Tip: Find your local IP using `ipconfig` on Windows or `ifconfig` on Mac/Linux)*.
 
 4. **Run the app**:
    ```bash
@@ -113,6 +116,29 @@ After updating `.env.local`, restart the dev server (`npm run dev`). Each scan r
 5. **Scan the QR Code**:
    - Open the **Expo Go** app on your phone.
    - Scan the QR code shown in your terminal.
+
+---
+
+## 🔐 Google SSO Setup
+
+The app uses Google Sign-In via Supabase Auth. Follow these steps:
+
+### 1. Enable Google Provider in Supabase
+- Go to **Supabase Dashboard → Authentication → Providers → Google**.
+- Toggle it **Enabled**.
+- Note the **Callback URL** shown (e.g., `https://<your-ref>.supabase.co/auth/v1/callback`).
+
+### 2. Create Google OAuth Credentials
+- Go to [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Credentials**.
+- Create an **OAuth 2.0 Client ID** (Application type: **Web application**).
+- Add your Supabase Callback URL from step 1 as an **Authorized Redirect URI**.
+- Copy the **Client ID** and **Client Secret**.
+
+### 3. Add Credentials to Supabase
+- Paste the **Client ID** and **Client Secret** into the Supabase Google provider settings and save.
+
+> [!NOTE]
+> For local testing, add your Google account as a **Test User** in Google Cloud Console → OAuth Consent Screen.
 
 ---
 
@@ -130,6 +156,6 @@ If the app cannot reach the backend:
 - [x] Real-time camera integration.
 - [x] AI-powered object analysis via Gemini Flash.
 - [x] Supabase database integration (scan history persistence).
-- [ ] User authentication.
-- [ ] View scan history in the app.
+- [x] Google SSO authentication with user profiles.
+- [ ] View scan history per user in the app.
 - [ ] Offline support for basic detection.

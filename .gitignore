@@ -52,3 +52,6 @@ credentials.json
 # generated native folders
 /ios
 /android
+
+# AI Tooling
+mcp-config.json
