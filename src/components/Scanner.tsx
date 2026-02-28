@@ -32,45 +32,45 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (object: string) => v
 
     return (
         <View style={styles.container}>
-            <CameraView style={styles.camera} facing={facing} flash={flash ? 'on' : 'off'}>
-                <View style={styles.overlay}>
-                    {/* Header */}
-                    <View style={styles.header}>
-                        <TouchableOpacity style={styles.iconButton}>
-                            <X color={COLORS.text} size={24} />
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Scanning Objects</Text>
-                        <TouchableOpacity style={styles.iconButton} onPress={() => setFlash(!flash)}>
-                            <Zap color={flash ? COLORS.warning : COLORS.text} size={24} fill={flash ? COLORS.warning : 'none'} />
-                        </TouchableOpacity>
-                    </View>
+            <CameraView style={StyleSheet.absoluteFillObject} facing={facing} flash={flash ? 'on' : 'off'} />
 
-                    {/* Scanner Frame */}
-                    <View style={styles.scannerContainer}>
-                        <View style={styles.scannerFrame}>
-                            <View style={[styles.corner, styles.cornerTopLeft]} />
-                            <View style={[styles.corner, styles.cornerTopRight]} />
-                            <View style={[styles.corner, styles.cornerBottomLeft]} />
-                            <View style={[styles.corner, styles.cornerBottomRight]} />
-
-                            <View style={styles.scanLine} />
-                        </View>
-                        <Text style={styles.hint}>Point your camera at an object</Text>
-                    </View>
-
-                    {/* Footer */}
-                    <View style={styles.footer}>
-                        <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
-                            <RotateCw color={COLORS.text} size={24} />
-                        </TouchableOpacity>
-                        <View style={styles.statusBadge}>
-                            <Scan color={COLORS.success} size={16} />
-                            <Text style={styles.statusText}>AI Active</Text>
-                        </View>
-                        <View style={{ width: 24 }} />
-                    </View>
+            <View style={styles.overlay}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.iconButton}>
+                        <X color={COLORS.text} size={24} />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Scanning Objects</Text>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => setFlash(!flash)}>
+                        <Zap color={flash ? COLORS.warning : COLORS.text} size={24} fill={flash ? COLORS.warning : 'none'} />
+                    </TouchableOpacity>
                 </View>
-            </CameraView>
+
+                {/* Scanner Frame */}
+                <View style={styles.scannerContainer}>
+                    <View style={styles.scannerFrame}>
+                        <View style={[styles.corner, styles.cornerTopLeft]} />
+                        <View style={[styles.corner, styles.cornerTopRight]} />
+                        <View style={[styles.corner, styles.cornerBottomLeft]} />
+                        <View style={[styles.corner, styles.cornerBottomRight]} />
+
+                        <View style={styles.scanLine} />
+                    </View>
+                    <Text style={styles.hint}>Point your camera at an object</Text>
+                </View>
+
+                {/* Footer */}
+                <View style={styles.footer}>
+                    <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
+                        <RotateCw color={COLORS.text} size={24} />
+                    </TouchableOpacity>
+                    <View style={styles.statusBadge}>
+                        <Scan color={COLORS.success} size={16} />
+                        <Text style={styles.statusText}>AI Active</Text>
+                    </View>
+                    <View style={{ width: 24 }} />
+                </View>
+            </View>
         </View>
     );
 };
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     overlay: {
-        flex: 1,
+        ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0,0,0,0.3)',
         justifyContent: 'space-between',
         padding: SPACING.lg,
