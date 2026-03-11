@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mobile Frontend Developer"
+  short_description: "Build React Native and Expo mobile UI"
+  default_prompt: "Use $mobile-frontend-developer to implement or refine a mobile frontend feature in this React Native/Expo codebase."

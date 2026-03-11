@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Branch and Push"
+  short_description: "Sync master, branch, commit, and push safely"
+  default_prompt: "Use $git-branch-and-push to commit and push my changes with the required master-sync and feature/bugfix branch workflow."
