@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "PackWise",
-    "slug": "packwise",
+    "name": "VoyageKit",
+    "slug": "voyagekit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "packwise",
+    "scheme": "voyagekit",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash-icon.png",

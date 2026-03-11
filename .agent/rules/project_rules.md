@@ -1,11 +1,11 @@
 ---
-description: App rules and conventions for the PackWise (Travel Prep AI) React Native Expo SDK 54 app
+description: App rules and conventions for the VoyageKit (Travel Prep AI) React Native Expo SDK 54 app
 ---
 
 # Project Guidelines
 
 ## Overview
-This is a cross-platform mobile application built with React Native and Expo SDK 54, named **PackWise**.
+This is a cross-platform mobile application built with React Native and Expo SDK 54, named **VoyageKit**.
 The core domain is helping users prepare for travel by scanning their gear/room using the camera/AI and suggesting missing travel essentials contextually (e.g., "You have a passport and suitcase, but you're missing a universal power adapter").
 
 ## Technical Stack
