@@ -24,6 +24,18 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+const getUrlParams = (url: string) => {
+    const parsedUrl = new URL(url);
+    const hash = parsedUrl.hash.startsWith('#') ? parsedUrl.hash.slice(1) : parsedUrl.hash;
+    const hashParams = new URLSearchParams(hash);
+
+    return {
+        code: parsedUrl.searchParams.get('code') || hashParams.get('code'),
+        accessToken: parsedUrl.searchParams.get('access_token') || hashParams.get('access_token'),
+        refreshToken: parsedUrl.searchParams.get('refresh_token') || hashParams.get('refresh_token'),
+    };
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
@@ -49,7 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const signInWithGoogle = async () => {
         try {
-            const redirectUrl = AuthSession.makeRedirectUri();
+            const redirectUrl = AuthSession.makeRedirectUri({ scheme: 'voyagekit', path: 'auth/callback' });
 
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
@@ -65,15 +77,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
 
             if (result.type === 'success') {
-                const { url } = result;
-                // Extract the tokens from the redirect URL
-                const params = new URL(url);
-                const accessToken = params.searchParams.get('access_token');
-                const refreshToken = params.searchParams.get('refresh_token');
+                const { code, accessToken, refreshToken } = getUrlParams(result.url);
+
+                if (code) {
+                    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+                    if (exchangeError) throw exchangeError;
+                    return;
+                }
 
                 if (accessToken && refreshToken) {
                     await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+                    return;
                 }
+
+                throw new Error('OAuth callback did not include a code or session tokens');
+            }
+
+            if (result.type !== 'cancel' && result.type !== 'dismiss') {
+                throw new Error(`OAuth flow ended with status: ${result.type}`);
             }
         } catch (error) {
             console.error('Google sign-in error:', error);

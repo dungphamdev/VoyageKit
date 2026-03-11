@@ -145,6 +145,13 @@ The app uses Google Sign-In via Supabase Auth. Follow these steps:
 
 - Paste the **Client ID** and **Client Secret** into the Supabase Google provider settings and save.
 
+### 4. Add Mobile Redirect URL in Supabase
+
+- Go to **Supabase Dashboard -> Authentication -> URL Configuration**.
+- Add this redirect URL to **Redirect URLs**:
+  - `voyagekit://auth/callback`
+- Save changes.
+
 > [!NOTE]
 > For local testing, add your Google account as a **Test User** in Google Cloud Console -> OAuth Consent Screen.
 

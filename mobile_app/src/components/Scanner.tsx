@@ -5,6 +5,21 @@ import { COLORS, SPACING, BORDER_RADIUS } from '../constants/theme';
 import { Scan, X, Zap, RotateCw, Camera } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
+const INVALID_API_URL_MARKERS = ['<YOUR_LOCAL_IP>', 'localhost', '127.0.0.1'];
+
+const getAnalyzeApiUrl = () => {
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
+    if (!apiUrl) {
+        throw new Error('Missing EXPO_PUBLIC_API_URL in mobile_app/.env');
+    }
+
+    const hasInvalidMarker = INVALID_API_URL_MARKERS.some((marker) => apiUrl.includes(marker));
+    if (hasInvalidMarker) {
+        throw new Error(`Invalid EXPO_PUBLIC_API_URL: ${apiUrl}. Use your computer's LAN IP, e.g. http://192.168.x.x:3000/api/analyze`);
+    }
+
+    return apiUrl;
+};
 
 const Scanner = ({ onObjectDetected }: { onObjectDetected: (suggestions: string) => void }) => {
     const [permission, requestPermission] = useCameraPermissions();
@@ -46,8 +61,7 @@ const Scanner = ({ onObjectDetected }: { onObjectDetected: (suggestions: string)
                 type: 'image/jpeg',
             } as any);
 
-            // Using EXPO_PUBLIC_API_URL or fallback to a placeholder local IP
-            const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.3:3000/api/analyze';
+            const apiUrl = getAnalyzeApiUrl();
 
             const response = await fetch(apiUrl, {
                 method: 'POST',

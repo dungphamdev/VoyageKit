@@ -14,7 +14,7 @@ const Stack = createNativeStackNavigator();
 
 // Inner navigator that reacts to auth state
 function RootNavigator() {
-  const { session, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -26,22 +26,16 @@ function RootNavigator() {
 
   return (
     <Stack.Navigator
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: COLORS.background },
       }}
     >
-      {session ? (
-        // Authenticated stack
-        <>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Scanner" component={ScannerScreen} />
-          <Stack.Screen name="Suggestions" component={SuggestionsScreen} />
-        </>
-      ) : (
-        // Unauthenticated stack
-        <Stack.Screen name="Login" component={LoginScreen} />
-      )}
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Scanner" component={ScannerScreen} />
+      <Stack.Screen name="Suggestions" component={SuggestionsScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
   );
 }

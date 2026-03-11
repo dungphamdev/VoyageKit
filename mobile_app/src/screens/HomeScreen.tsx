@@ -4,10 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, BORDER_RADIUS } from '../constants/theme';
 import { Camera, Sparkles, Box } from 'lucide-react-native';
+import { useAuth } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }: any) => {
+    const { user, signOut } = useAuth();
     // Subtle float animation for the icon
     const translateY = new Animated.Value(0);
 
@@ -38,6 +40,13 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.content}>
                 {/* Header Section */}
                 <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.authButton}
+                        onPress={user ? signOut : () => navigation.navigate('Login')}
+                        activeOpacity={0.9}
+                    >
+                        <Text style={styles.authButtonText}>{user ? 'Sign Out' : 'Sign In'}</Text>
+                    </TouchableOpacity>
                     <View style={styles.logoBadge}>
                         <Sparkles color={COLORS.primary} size={16} />
                         <Text style={styles.logoBadgeText}>AI Powered</Text>
@@ -124,6 +133,22 @@ const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
         marginTop: SPACING.xl,
+        width: '100%',
+    },
+    authButton: {
+        alignSelf: 'flex-end',
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        borderWidth: 1,
+        borderColor: 'rgba(99, 102, 241, 0.35)',
+        paddingHorizontal: SPACING.md,
+        paddingVertical: SPACING.xs,
+        borderRadius: BORDER_RADIUS.full,
+        marginBottom: SPACING.md,
+    },
+    authButtonText: {
+        color: COLORS.primary,
+        fontSize: 13,
+        fontWeight: '700',
     },
     logoBadge: {
         flexDirection: 'row',

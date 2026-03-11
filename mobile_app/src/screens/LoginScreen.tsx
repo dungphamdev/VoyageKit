@@ -12,7 +12,7 @@ import { Package, Sparkles } from 'lucide-react-native';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { width } = Dimensions.get('window');
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }: any) => {
     const { signInWithGoogle, loading } = useAuth();
     const [signingIn, setSigningIn] = React.useState(false);
 
@@ -102,6 +102,14 @@ const LoginScreen = () => {
                                 <Text style={styles.googleButtonText}>Continue with Google</Text>
                             </>
                         )}
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.guestButton}
+                        onPress={() => navigation.goBack()}
+                        activeOpacity={0.85}
+                    >
+                        <Text style={styles.guestButtonText}>Continue as Guest</Text>
                     </TouchableOpacity>
 
                     <Text style={styles.terms}>
@@ -247,6 +255,20 @@ const styles = StyleSheet.create({
         color: '#1f2937',
         fontSize: 16,
         fontWeight: '600',
+    },
+    guestButton: {
+        height: 52,
+        borderRadius: BORDER_RADIUS.full,
+        borderWidth: 1,
+        borderColor: 'rgba(99, 102, 241, 0.35)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(99, 102, 241, 0.08)',
+    },
+    guestButtonText: {
+        color: COLORS.primary,
+        fontSize: 15,
+        fontWeight: '700',
     },
     terms: {
         color: COLORS.textMuted,
