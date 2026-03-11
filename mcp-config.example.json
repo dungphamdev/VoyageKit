@@ -1,6 +1,6 @@
 {
     "mcpServers": {
-        "packwise-supabase": {
+        "voyagekit-supabase": {
             "command": "npx.cmd",
             "args": [
                 "-y",

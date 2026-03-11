@@ -77,7 +77,7 @@ const LoginScreen = () => {
                         <Text style={styles.badgeText}>AI TRAVEL PREP</Text>
                     </View>
 
-                    <Text style={styles.title}>PackWise</Text>
+                    <Text style={styles.title}>VoyageKit</Text>
                     <Text style={styles.subtitle}>
                         Scan your gear. Know what's missing.{'\n'}Travel smarter.
                     </Text>
